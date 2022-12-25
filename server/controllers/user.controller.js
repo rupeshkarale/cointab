@@ -5,20 +5,32 @@ const User = require('../models/user.model');
 const userRouter = express.Router();
 
 userRouter.post('/sendData', async (req, res) => {
-    const body = req.body.results
-    // const data = await User(req.body.results[0]);
+    try {
+        const body = req.body
+        // const data = await User(req.body.results[0]);
 
-    // const ans = await data.save();
-    // console.log(req.body.results);
+        // const ans = await data.save();
+        // console.log(req.body.results);
 
-    const data = await User.insertMany(body, { ordered: true })
-    console.log(data)
+        const data = await User.insertMany(body, { ordered: true })
+        res.send(data).status(201)
+    } catch (error) {
+        res.send(error).status(404)
+    }
+    
+    
 })
 
 userRouter.delete('/sendData', async (req, res) => {
-
+try {
     const result = await User.deleteMany()
-    console.log(result)
+    res.send(result).status(201)
+} catch (error) {
+    res.send(error).status(404)
+
+}
+    
+    
 })
 
 userRouter.get('/page', async (req, res) => {
@@ -29,10 +41,21 @@ userRouter.get('/page', async (req, res) => {
     } else {
         page = 0;
     }
-    console.log(page)
+    
     const result = await User.find().skip(page).limit(10)
     res.send(result)
-    console.log(result.length)
+    
+})
+userRouter.get('/count', async (req, res) => {
+    try {
+        let count = await User.count({})
+        res.send({
+            count:count
+        }).status(201)
+    } catch (error) {
+        res.send(error)
+    }
+
 })
 
 
